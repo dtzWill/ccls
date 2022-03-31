@@ -27,6 +27,8 @@
 #include <malloc.h>
 #endif
 
+#include <clang/Basic/Stack.h>
+
 #include <llvm/ADT/SmallString.h>
 #include <llvm/Support/Path.h>
 
@@ -65,7 +67,7 @@ void spawnThread(void *(*fn)(void *), void *arg) {
   pthread_t thd;
   pthread_attr_t attr;
   struct rlimit rlim;
-  size_t stack_size = 4 * 1024 * 1024;
+  size_t stack_size = clang::DesiredStackSize;
   if (getrlimit(RLIMIT_STACK, &rlim) == 0 && rlim.rlim_cur != RLIM_INFINITY)
     stack_size = rlim.rlim_cur;
   pthread_attr_init(&attr);
