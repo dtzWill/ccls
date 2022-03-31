@@ -10,6 +10,7 @@
 #include "sema_manager.hh"
 
 #include <clang/AST/AST.h>
+#include <clang/Basic/Stack.h>
 #include <clang/Basic/TargetInfo.h>
 #include <clang/Frontend/FrontendAction.h>
 #include <clang/Frontend/MultiplexConsumer.h>
@@ -1344,6 +1345,7 @@ index(SemaManager *manager, WorkingFiles *wfiles, VFS *vfs,
   {
     llvm::CrashRecoveryContext crc;
     auto parse = [&]() {
+      clang::noteBottomOfStack(); // per-thread, needed to detect/avoid running out of stack
       if (!action->BeginSourceFile(*clang, clang->getFrontendOpts().Inputs[0]))
         return;
 #if LLVM_VERSION_MAJOR >= 9 // rL364464

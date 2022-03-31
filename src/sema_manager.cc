@@ -9,6 +9,7 @@
 #include "pipeline.hh"
 #include "platform.hh"
 
+#include <clang/Basic/Stack.h>
 #include <clang/Basic/TargetInfo.h>
 #include <clang/Lex/PreprocessorOptions.h>
 #include <clang/Sema/CodeCompleteConsumer.h>
@@ -330,6 +331,7 @@ bool parse(CompilerInstance &clang) {
   llvm::CrashRecoveryContext crc;
   bool ok = false;
   auto run = [&]() {
+    clang::noteBottomOfStack(); // per-thread, needed to detect/avoid running out of stack
     if (!action.BeginSourceFile(clang, clang.getFrontendOpts().Inputs[0]))
       return;
 #if LLVM_VERSION_MAJOR >= 9 // rL364464

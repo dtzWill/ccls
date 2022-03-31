@@ -8,6 +8,7 @@
 #include "test.hh"
 #include "working_files.hh"
 
+#include <clang/Basic/Stack.h>
 #include <clang/Basic/Version.h>
 #include <llvm/Support/CommandLine.h>
 #include <llvm/Support/CrashRecoveryContext.h>
@@ -78,8 +79,10 @@ int main(int argc, char **argv) {
 
   pipeline::init();
   const char *env = getenv("CCLS_CRASH_RECOVERY");
-  if (!env || strcmp(env, "0") != 0)
+  if (!env || strcmp(env, "0") != 0) {
     CrashRecoveryContext::Enable();
+    clang::noteBottomOfStack(); // per-thread, needed to detect/avoid running out of stack
+  }
 
   bool language_server = true;
 
